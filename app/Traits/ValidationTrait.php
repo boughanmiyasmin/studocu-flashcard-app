@@ -13,9 +13,13 @@ trait ValidationTrait
         do {
             $value = $this->ask($question);
 
-            $validator = Validator::make([$field => $value], ValidationRules::{$field . "Rule"}());
+            $validationRule = ValidationRules::{$field . "Rule"}();
+            $rules = $validationRule['rules'];
+            $messages = $validationRule['messages'];
+
+            $validator = Validator::make([$field => $value], $rules, $messages);
             if ($validator->fails()) {
-                $this->error(Constants::INVALID_OPTION_MESSAGE);
+                $this->error($validator->errors()->first($field));
             }
 
         } while ($validator->fails());
