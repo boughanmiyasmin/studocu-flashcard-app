@@ -45,4 +45,5 @@ class Constants
         'completionPercentage' => 'Percentage of completion: ',
         'correctAnswersPercentage' => 'Percentage of correct answers: '
     ];
+    const FLASHCARD_COUNT = 'The total amount of questions: ';
 }

@@ -102,7 +102,15 @@ class flashcardInteractive extends Command
         return $flashcard;
     }
 
-    /*@ToDo progress*/
+    private function progress(string $email): void
+    {
+        $practiceFlashcards = $this->practiceService->practiceFlashcards($email);
+        $flashcardsCount = $practiceFlashcards->count();
+
+        $this->info(Constants::FLASHCARD_COUNT . $flashcardsCount);
+        $this->buildProgressBar($practiceFlashcards, Constants::COMPLETION_PERCENTAGE);
+        $this->buildProgressBar($practiceFlashcards, Constants::CORRECT_PERCENTAGE);
+    }
     /*@ToDo reset*/
 
     private function displayMainMenu(string $email): void
