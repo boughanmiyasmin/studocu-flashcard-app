@@ -46,4 +46,7 @@ class Constants
         'correctAnswersPercentage' => 'Percentage of correct answers: '
     ];
     const FLASHCARD_COUNT = 'The total amount of questions: ';
+
+    const RESET_SUCCESS = 'Progress has been reset.';
+    const RESET_FAIL = 'Something Went wrong while resetting your progress, please try again later!';
 }

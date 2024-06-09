@@ -24,6 +24,5 @@ trait progressBarTrait
         $bar = str_repeat('█', $completed) . str_repeat('░', $remaining);
 
         $this->output->writeln(sprintf("%d%% [%s] %d%%", $percentage, $bar, $percentage));
-
     }
 }

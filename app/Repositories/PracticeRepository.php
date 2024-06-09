@@ -46,4 +46,9 @@ class PracticeRepository
         return $flashcards->whereIn('Status',[Constants::CORRECT, Constants::INCORRECT])
             ->count();
     }
+
+    public function resetProgress(string $email): bool
+    {
+        return Practice::where('email', $email)->update(['status' => Constants::NOT_ANSWERED]);
+    }
 }

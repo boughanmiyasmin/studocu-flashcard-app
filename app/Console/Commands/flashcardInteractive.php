@@ -111,7 +111,13 @@ class flashcardInteractive extends Command
         $this->buildProgressBar($practiceFlashcards, Constants::COMPLETION_PERCENTAGE);
         $this->buildProgressBar($practiceFlashcards, Constants::CORRECT_PERCENTAGE);
     }
-    /*@ToDo reset*/
+
+    private function reset(string $email): void
+    {
+        !$this->practiceService->resetProgress($email) ? $this->info(Constants::RESET_FAIL) : $this->info(
+            Constants::RESET_SUCCESS
+        );
+    }
 
     private function displayMainMenu(string $email): void
     {

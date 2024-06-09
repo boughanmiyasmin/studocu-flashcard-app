@@ -76,4 +76,9 @@ class PracticeService
         $totalQuestions = $practiceFlashcards->count();
         return $totalQuestions >= 1 || $correctAnswers >= 1 ? ($correctAnswers / $totalQuestions) * 100 : 0;
     }
+
+    public function resetProgress(string $email): int
+    {
+        return $this->practiceRepository->resetProgress($email);
+    }
 }
