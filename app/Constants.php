@@ -28,4 +28,15 @@ class Constants
     const FLASHCARD_CREATED_FAIL = 'Something Went wrong while creating the flashcard, please try again later!';
     const FLASHCARD_CREATED_SUCCESS = 'Flashcard created successfully!';
     const LIST_HEADER = ['ID', 'Question', 'Answer'];
+    const PRACTICE_LIST_HEADER = ['ID', 'Question', 'Status'];
+
+    const NOT_ANSWERED = 'Not answered';
+    const CORRECT = 'Correct';
+    const INCORRECT = 'Incorrect';
+
+    const ENTER_FLASHCARD_ID_PROMPT = 'Enter the ID of the flashcard you want to practice or type exit to go back to the main menu';
+    const EXIT = 'exit';
+    const ENDING_PRACTICE = 'Ending practice...';
+    const ALREADY_CORRECT_MESSAGE = 'You have already answered this question correctly.';
+
 }

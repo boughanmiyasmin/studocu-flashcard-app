@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Constants;
+use App\Models\Flashcard as flashcardModel;
 use App\Services\FlashcardService;
+use App\Services\PracticeService;
 use App\Traits\ValidationTrait;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -15,7 +17,7 @@ class flashcardInteractive extends Command
 
     protected $description = 'Interactive CLI program for Flashcard practice';
 
-    public function __construct(private FlashcardService $flashcardService)
+    public function __construct(private FlashcardService $flashcardService, private PracticeService $practiceService)
     {
         parent::__construct();
     }
@@ -48,8 +50,55 @@ class flashcardInteractive extends Command
         $flashcards = $this->flashcardService->listFlashcards();
         $this->table(Constants::LIST_HEADER, $flashcards->toArray());
     }
-    /*@ToDo practice*/
+
+    private function practice(string $email): void
+    {
+        do {
+            $practiceFlashcards = $this->practiceService->practiceFlashcards($email);
+
+            $this->table(Constants::PRACTICE_LIST_HEADER, $practiceFlashcards->toArray());
+
+            $choice = $this->ask(Constants::ENTER_FLASHCARD_ID_PROMPT);
+
+            if (strtolower($choice) === Constants::EXIT) {
+                $this->info(Constants::ENDING_PRACTICE);
+                continue;
+            }
+
+            $flashcard = $this->getUserPracticeFlashcard($choice, $email);
+            if (!$flashcard) {
+                continue;
+            }
+
+            $answer = $this->askWithValidation($flashcard->question, Constants::ANSWER);
+
+            $status = $this->practiceService->processAnswer($flashcard, $email, $answer);
+
+            $this->info($status . '!');
+
+        } while (strtolower($choice) !== Constants::EXIT);
+    }
+
+    private function getUserPracticeFlashcard(string $choice, string $email): flashcardModel|bool
+    {
+        try {
+            $flashcard = $this->practiceService->practiceFlashcard($choice, $email);
+            if ($flashcard->status === Constants::CORRECT) {
+                $this->info(Constants::ALREADY_CORRECT_MESSAGE);
+
+                return false;
+            }
+        } catch (\Exception $e) {
+            $this->info($e->getMessage());
+
+            return false;
+        }
+
+        return $flashcard;
+    }
+
     /*@ToDo progress*/
+    /*@ToDo reset*/
 
     private function displayMainMenu(string $email): void
     {
