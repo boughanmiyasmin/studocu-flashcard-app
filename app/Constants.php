@@ -27,6 +27,5 @@ class Constants
     const ANSWER = 'answer';
     const FLASHCARD_CREATED_FAIL = 'Something Went wrong while creating the flashcard, please try again later!';
     const FLASHCARD_CREATED_SUCCESS = 'Flashcard created successfully!';
-
-
+    const LIST_HEADER = ['ID', 'Question', 'Answer'];
 }

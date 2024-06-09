@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Flashcard;
 use App\Repositories\FlashcardRepository;
+use Illuminate\Database\Eloquent\Collection;
 
 class FlashcardService
 {
@@ -19,5 +20,10 @@ class FlashcardService
         ];
 
         return $this->flashcardRepository->create($data);
+    }
+
+    public function listFlashcards(): Collection
+    {
+        return $this->flashcardRepository->getFlashcards();
     }
 }

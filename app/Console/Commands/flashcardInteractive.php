@@ -43,7 +43,11 @@ class flashcardInteractive extends Command
         $this->info(Constants::FLASHCARD_CREATED_SUCCESS);
     }
 
-    /*@ToDo listFlashcards*/
+    private function listFlashcards(): void
+    {
+        $flashcards = $this->flashcardService->listFlashcards();
+        $this->table(Constants::LIST_HEADER, $flashcards->toArray());
+    }
     /*@ToDo practice*/
     /*@ToDo progress*/
 
