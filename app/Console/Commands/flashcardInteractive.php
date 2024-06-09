@@ -3,8 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Constants;
+use App\Services\FlashcardService;
 use App\Traits\ValidationTrait;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class flashcardInteractive extends Command
 {
@@ -13,11 +15,37 @@ class flashcardInteractive extends Command
 
     protected $description = 'Interactive CLI program for Flashcard practice';
 
+    public function __construct(private FlashcardService $flashcardService)
+    {
+        parent::__construct();
+    }
+
     public function handle(): void
     {
         $email = $this->askWithValidation(Constants::EMAIL_PROMPT, Constants::EMAIL);
         $this->displayMainMenu($email);
     }
+
+    private function createFlashcard(): void
+    {
+        $question = $this->askWithValidation(Constants::QUESTION_PROMPT, Constants::QUESTION);
+        $answer = $this->askWithValidation(Constants::ANSWER_PROMPT, Constants::ANSWER);
+
+        try {
+            $this->flashcardService->createFlashcard($question, $answer);
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            $this->info(Constants::FLASHCARD_CREATED_FAIL);
+
+            return;
+        }
+
+        $this->info(Constants::FLASHCARD_CREATED_SUCCESS);
+    }
+
+    /*@ToDo listFlashcards*/
+    /*@ToDo practice*/
+    /*@ToDo progress*/
 
     private function displayMainMenu(string $email): void
     {

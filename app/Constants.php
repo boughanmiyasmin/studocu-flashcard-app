@@ -20,6 +20,13 @@ class Constants
 
     const CHOOSE_OPTION_PROMPT = 'Choose an option';
     const GOODBYE_MESSAGE = 'Goodbye!';
-
     const INVALID_OPTION_MESSAGE = 'Invalid option. Please try again.';
+    const QUESTION_PROMPT = 'Enter the flashcard question';
+    const QUESTION = 'question';
+    const ANSWER_PROMPT = 'Enter the answer';
+    const ANSWER = 'answer';
+    const FLASHCARD_CREATED_FAIL = 'Something Went wrong while creating the flashcard, please try again later!';
+    const FLASHCARD_CREATED_SUCCESS = 'Flashcard created successfully!';
+
+
 }
