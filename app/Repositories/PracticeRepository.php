@@ -40,4 +40,10 @@ class PracticeRepository
     {
         Practice::where('id', $practice->id)->update($data);
     }
+
+    public function getAnsweredQuestionsCount(Collection $flashcards): int
+    {
+        return $flashcards->whereIn('Status',[Constants::CORRECT, Constants::INCORRECT])
+            ->count();
+    }
 }

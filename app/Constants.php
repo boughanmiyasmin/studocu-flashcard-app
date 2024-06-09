@@ -39,4 +39,10 @@ class Constants
     const ENDING_PRACTICE = 'Ending practice...';
     const ALREADY_CORRECT_MESSAGE = 'You have already answered this question correctly.';
 
+    const COMPLETION_PERCENTAGE = 'completionPercentage';
+    const CORRECT_PERCENTAGE = 'correctAnswersPercentage';
+    const PERCENTAGE = [
+        'completionPercentage' => 'Percentage of completion: ',
+        'correctAnswersPercentage' => 'Percentage of correct answers: '
+    ];
 }

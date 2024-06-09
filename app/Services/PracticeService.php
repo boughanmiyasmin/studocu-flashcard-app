@@ -58,4 +58,22 @@ class PracticeService
 
         return $status;
     }
+
+    public function completionPercentage(Collection $practiceFlashcards): int
+    {
+        $correctAnswers = $practiceFlashcards->where('Status', 'Correct')->count();
+        return $this->calculatePercentage($practiceFlashcards, $correctAnswers);
+    }
+
+    public function correctAnswersPercentage(Collection $practiceFlashcards): int
+    {
+        $answers = $this->practiceRepository->getAnsweredQuestionsCount($practiceFlashcards);
+        return $this->calculatePercentage($practiceFlashcards, $answers);
+    }
+
+    private function calculatePercentage(Collection $practiceFlashcards, int $correctAnswers): int|float
+    {
+        $totalQuestions = $practiceFlashcards->count();
+        return $totalQuestions >= 1 || $correctAnswers >= 1 ? ($correctAnswers / $totalQuestions) * 100 : 0;
+    }
 }

@@ -6,6 +6,7 @@ use App\Constants;
 use App\Models\Flashcard as flashcardModel;
 use App\Services\FlashcardService;
 use App\Services\PracticeService;
+use App\Traits\progressBarTrait;
 use App\Traits\ValidationTrait;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Log;
 class flashcardInteractive extends Command
 {
     use ValidationTrait;
+    use progressBarTrait;
+
     protected $signature = 'flashcard:interactive';
 
     protected $description = 'Interactive CLI program for Flashcard practice';
@@ -57,6 +60,8 @@ class flashcardInteractive extends Command
             $practiceFlashcards = $this->practiceService->practiceFlashcards($email);
 
             $this->table(Constants::PRACTICE_LIST_HEADER, $practiceFlashcards->toArray());
+
+            $this->buildProgressBar($practiceFlashcards, Constants::COMPLETION_PERCENTAGE);
 
             $choice = $this->ask(Constants::ENTER_FLASHCARD_ID_PROMPT);
 
