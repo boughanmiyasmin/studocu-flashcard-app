@@ -96,7 +96,7 @@ class PracticeServiceTest extends TestCase
     public function testGetUserFlashcardPracticeThrowsException()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage(Constants::INVALID_OPTION_MESSAGE);
+        $this->expectExceptionMessage(PracticeService::INVALID_FLASHCARD);
 
         $email = 'test@example.com';
 

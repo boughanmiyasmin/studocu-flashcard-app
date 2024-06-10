@@ -2,45 +2,32 @@
 
 namespace Tests\Unit;
 
-use App\Console\Commands\FlashcardInteractive;
-use App\Constants;
+use App\Traits\ValidationTrait;
 use App\Validators\ValidationRules;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\MessageBag;
 use Mockery;
 use Tests\TestCase;
 
 class ValidationTraitTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
+        $this->command = Mockery::mock('command');
+        $this->command->shouldReceive('ask')->andReturn('validValue');
+        $this->command->shouldReceive('error');
+
+        $trait = new class {
+            use ValidationTrait;
+            public $command;
+        };
+        $trait->command = $this->command;
+        $this->trait = $trait;
     }
 
-    public function testAskWithValidationSuccess()
+    public function testAskWithValidationReturnsValidValue()
     {
-        $rules = ['required', 'email'];
-        $this->mock(ValidationRules::class, function ($mock) use ($rules) {
-            $mock->shouldReceive('emailRule')->andReturn($rules);
-        });
-
-        Validator::shouldReceive('make')
-            ->once()
-            ->andReturn(Mockery::mock('Illuminate\Contracts\Validation\Validator', function ($mock) {
-                $mock->shouldReceive('fails')->andReturn(false);
-            }));
-
-        $command = Mockery::mock(FlashcardInteractive::class)->makePartial();
-        $command->shouldReceive('ask')->once()->andReturn('test@gmail.com');
-
-        $result = $command->askWithValidation('Enter a value:', 'email');
-
-        $this->assertEquals('test@gmail.com', $result);
-    }
-
-    public function testAskWithValidationFailure()
-    {
-        $emailRules = [
+        $data = [
             'rules' => [
                 'email' => [
                     'required',
@@ -52,33 +39,59 @@ class ValidationTraitTest extends TestCase
                 'email.email' => 'The email must be a valid email address.',
             ]
         ];
-        $this->mock(ValidationRules::class, function ($mock) use ($emailRules) {
-            $mock->shouldReceive('emailRule')->andReturn($emailRules);
+        $this->mock(ValidationRules::class, function ($mock) use ($data) {
+            $mock->shouldReceive('emailRule')->andReturn($data);
         });
 
         Validator::shouldReceive('make')
-            ->twice()
-            ->andReturn(
-                Mockery::mock('Illuminate\Contracts\Validation\Validator', function ($mock) {
-                    $mock->shouldReceive('fails')->andReturn(true);
-                    $mock->shouldReceive('errors')->andReturn(new MessageBag());
-                }),
-                Mockery::mock('Illuminate\Contracts\Validation\Validator', function ($mock) {
-                    $mock->shouldReceive('fails')->andReturn(false);
-                })
-            );
+            ->with(['email' => 'validValue'], $data['rules'], $data['messages'])
+            ->andReturnSelf();
 
-        $command = Mockery::mock(FlashcardInteractive::class)->makePartial();
-        $command->shouldReceive('ask')
-            ->once()
-            ->andReturn('invalid_email'); // First call returns invalid input
-        $command->shouldReceive('ask')
-            ->once()
-            ->andReturn('test@gmail.com'); // Second call returns valid input
-        $command->shouldReceive('error')->once()->andReturn('The email must be a valid email address.');
+        Validator::shouldReceive('fails')->andReturn(false);
 
-        $result = $command->askWithValidation('Enter a value:', 'email');
+        $result = $this->trait->askWithValidation('Enter value:', 'email');
 
-        $this->assertEquals('test@gmail.com', $result);
+        $this->assertEquals('validValue', $result);
+    }
+
+    public function testAskWithValidationRetriesOnInvalidValue()
+    {
+        $data = [
+            'rules' => [
+                'email' => [
+                    'required',
+                    'email',
+                ]
+            ],
+            'messages' => [
+                'email.required' => 'The email field is required.',
+                'email.email' => 'The email must be a valid email address.',
+            ]
+        ];
+        $this->mock(ValidationRules::class, function ($mock) use ($data) {
+            $mock->shouldReceive('emailRule')->andReturn($data);
+        });
+
+        Validator::shouldReceive('make')
+            ->with(['email' => 'invalidValue'], $data['rules'], $data['messages'])
+            ->andReturnSelf();
+
+        Validator::shouldReceive('make')
+            ->with(['email' => 'validValue'], $data['rules'], $data['messages'])
+            ->andReturnSelf();
+
+        Validator::shouldReceive('fails')->andReturn(true, false);
+        Validator::shouldReceive('errors')->andReturnSelf();
+        Validator::shouldReceive('first')->andReturn('The email must be a valid email address.');
+
+        $result = $this->trait->askWithValidation('Enter value:', 'email');
+
+        $this->assertEquals('validValue', $result);
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
     }
 }
