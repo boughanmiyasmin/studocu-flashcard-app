@@ -36,9 +36,9 @@ class PracticeRepository
         return Practice::create($data);
     }
 
-    public function update(Practice$practice, array $data): void
+    public function update(Practice $practice, array $data): void
     {
-        Practice::where('id', $practice->id)->update($data);
+        $practice->update($data);
     }
 
     public function getAnsweredQuestionsCount(Collection $flashcards): int

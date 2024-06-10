@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 
 class PracticeService
 {
+    const INVALID_FLASHCARD = 'Invalid id. Please try again.';
     public function __construct(private PracticeRepository $practiceRepository)
     {
     }
@@ -35,7 +36,7 @@ class PracticeService
         $flashcard = $this->practiceRepository->getPracticeFlashcard($id, $email);
 
         if (!$flashcard) {
-            throw new \Exception(Constants::INVALID_OPTION_MESSAGE);
+            throw new \Exception(self::INVALID_FLASHCARD);
         }
 
         return $flashcard->determinePracticeStatus();
@@ -74,7 +75,7 @@ class PracticeService
     private function calculatePercentage(Collection $practiceFlashcards, int $correctAnswers): int|float
     {
         $totalQuestions = $practiceFlashcards->count();
-        return $totalQuestions >= 1 || $correctAnswers >= 1 ? ($correctAnswers / $totalQuestions) * 100 : 0;
+        return $totalQuestions >= 1 ? ($correctAnswers / $totalQuestions) * 100 : 0;
     }
 
     public function resetProgress(string $email): int

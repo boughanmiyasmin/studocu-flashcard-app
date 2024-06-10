@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-use App\Constants;
 use App\Validators\ValidationRules;
 use Illuminate\Support\Facades\Validator;
 
@@ -11,7 +10,7 @@ trait ValidationTrait
     public function askWithValidation(string $question, string $field): string
     {
         do {
-            $value = $this->ask($question);
+            $value = $this->command->ask($question);
 
             $validationRule = ValidationRules::{$field . "Rule"}();
             $rules = $validationRule['rules'];
@@ -19,7 +18,7 @@ trait ValidationTrait
 
             $validator = Validator::make([$field => $value], $rules, $messages);
             if ($validator->fails()) {
-                $this->error($validator->errors()->first($field));
+                $this->command->error($validator->errors()->first($field));
             }
 
         } while ($validator->fails());

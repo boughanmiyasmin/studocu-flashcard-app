@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Flashcard;
 use App\Repositories\FlashcardRepository;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 class FlashcardService
 {
