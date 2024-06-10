@@ -49,12 +49,6 @@ now run sail
 sail up -d
 ```
 
-### Clear laravel configuration cache
-
-```sh
-sail artisan config:cache
-```
-
 ### Run Migrations
 To set up the database, run the migrations:
 
@@ -74,7 +68,7 @@ sail artisan flashcard:interactive
 
 - Laravel Sail: Provides a simple way to run the Laravel application using Docker.
 - PHP 8.3: Latest version of PHP for improved performance and features.
-- MySQL: Used as the SQL database to persist flashcards and practice progress.
+- SQLite: For better Performance and Simplicity SQLite is used (it's convenient for testing applications quickly)
 
 ### Database Structure
 - flashcards table: Stores the flashcard questions and answers.
@@ -90,6 +84,10 @@ sail artisan flashcard:interactive
 
 ## Testing
 The project includes test cases to ensure the correct functionality of all features. Run the tests with:
+
+```sh
+sail artisan migrate --env=testing
+```
 
 ```sh
 sail artisan test
